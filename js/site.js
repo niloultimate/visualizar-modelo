@@ -20,7 +20,21 @@ $(document).ready(function() {
         };
         reader.readAsText(input);
     });
+    LoadDatabase();
+    AplicarSelect2();
 });
+
+//#region [Controle]
+//select2
+function AplicarSelect2() {
+    $('.select2')
+        .select2({
+            placeholder: "Type",
+            with: "300px",
+        });
+}
+//#endregion
+
 
 //#region [Armazenar dados no navegador]
 
@@ -32,7 +46,30 @@ function SetDatabase(data) {
 // CarregarDados
 function LoadDatabase() {
     if (localStorage.getItem('base') != null) {
-        return JSON.parse(localStorage.getItem('base'));
+
+        var auxDados = JSON.parse(localStorage.getItem('base'));
+        
+        var ddlCampos = document.getElementById('ddlCampos');
+        for (let i = 0; i < auxDados[0].length; i++) {
+            ddlCampos.innerHTML += '<option value="' + i + '" selected>' + auxDados[0][i] + '</option>';
+        }
+
+        var ddlMesclagem = document.getElementById('ddlMesclagem');
+        for (let i = 0; i < auxDados[0].length; i++) {
+            ddlMesclagem.innerHTML += '<option value="' + i + '">' + auxDados[0][i] + '</option>';
+        }
+
+        var ddlSoma = document.getElementById('ddlSoma');
+        for (let i = 0; i < auxDados[0].length; i++) {
+            ddlSoma.innerHTML += '<option value="' + i + '">' + auxDados[0][i] + '</option>';
+        }
+
+        var ddlTotaisMesclagem = document.getElementById('ddlTotaisMesclagem');
+        for (let i = 0; i < auxDados[0].length; i++) {
+            ddlTotaisMesclagem.innerHTML += '<option value="' + i + '">' + auxDados[0][i] + '</option>';
+        }
+        
+        return auxDados;
     }else{
         alert('Nenhum dado, carrege o CSV');
         return null;
@@ -47,20 +84,20 @@ function ClearDatabase() {
 
 // Botao para atualizar modelo
 function AtualizarModelo(){
-    var dados = LoadDatabase();
+    var dados = JSON.parse(localStorage.getItem('base'));
 
     if(dados != null){
 
-        var result = '<table class="table"><thead style="background-color:' + document.getElementById('colorCabecalhoBackground').value + ';color:' + document.getElementById('colorCabecalhoFonte').value + '"><tr>';
+        var result = '<table class="table" style="border: 1px solid black;"><thead><tr style="background-color:' + document.getElementById('colorCabecalhoBackground').value + ';color:' + document.getElementById('colorCabecalhoFonte').value + '">';
         
-        for (let col = 0; col < dados[0].length; col++) {
-            result += '<th scope="col">' + dados[0][col] + '</th>';
+        var auxCamposExibir = $('#ddlCampos').select2('data').map(i => i.id);
+
+        for (let i = 0; i < auxCamposExibir.length; i++) {
+            result += '<th scope="col">' + dados[0][auxCamposExibir[i]] + '</th>';
         }
 
         result += '</tr></thead>';
         result += SepararTabela();
-
-        console.log(dados[0]);
 
         document.getElementById("divResult").innerHTML = result
     }
