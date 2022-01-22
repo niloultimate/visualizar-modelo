@@ -26,15 +26,16 @@ $(document).ready(function() {
 
 // GravarDados
 function SetDatabase(data) {
-    localStorage.setItem('base', data);
+    localStorage.setItem('base', JSON.stringify(data));
 }
 
 // CarregarDados
 function LoadDatabase() {
     if (localStorage.getItem('base') != null) {
-        return localStorage.getItem('base');
+        return JSON.parse(localStorage.getItem('base'));
     }else{
-        alert('Nenhum dado, carrege o CSV')
+        alert('Nenhum dado, carrege o CSV');
+        return null;
     }
 }
 
@@ -46,11 +47,23 @@ function ClearDatabase() {
 
 // Botao para atualizar modelo
 function AtualizarModelo(){
+    var dados = LoadDatabase();
 
-    
+    if(dados != null){
 
+        var result = '<table class="table"><thead style="background-color:' + document.getElementById('colorCabecalhoBackground').value + ';color:' + document.getElementById('colorCabecalhoFonte').value + '"><tr>';
+        
+        for (let col = 0; col < dados[0].length; col++) {
+            result += '<th scope="col">' + dados[0][col] + '</th>';
+        }
 
-    document.getElementById("divResult").innerHTML = SepararTabela();
+        result += '</tr></thead>';
+        result += SepararTabela();
+
+        console.log(dados[0]);
+
+        document.getElementById("divResult").innerHTML = result
+    }
 }
 
 // Retorna uma tabela para separar as tabelas 
